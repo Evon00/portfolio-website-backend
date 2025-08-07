@@ -3,7 +3,6 @@ package com.example.portfolio_website_backend.project.domain;
 import com.example.portfolio_website_backend.common.domain.ImageContent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
