@@ -1,5 +1,6 @@
 package com.example.portfolio_website_backend.member.domain;
 
+import com.example.portfolio_website_backend.common.domain.Role;
 import com.example.portfolio_website_backend.skill.domain.Skill;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,10 +40,14 @@ public class Member {
     @Column(name = "profile_url")
     private String profileUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     List<MemberSkill> memberSkills = new ArrayList<>();
     @Builder
-    public Member(String username, String password, String name, String description, String githubUrl, String emailUrl, String profileUrl){
+    public Member(String username, String password, String name, String description, String githubUrl, String emailUrl, String profileUrl, Role role){
         this.username = username;
         this.password = password;
         this.name = name;
@@ -50,6 +55,7 @@ public class Member {
         this.githubUrl = githubUrl;
         this.emailUrl = emailUrl;
         this.profileUrl = profileUrl;
+        this.role = role;
     }
 
     public void addMemberSkill(Skill skill){
