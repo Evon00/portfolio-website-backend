@@ -1,14 +1,15 @@
 package com.example.portfolio_website_backend.member.controller;
 
 import com.example.portfolio_website_backend.common.dto.SuccessResponse;
+import com.example.portfolio_website_backend.common.security.annotation.CurrentMember;
+import com.example.portfolio_website_backend.member.domain.Member;
 import com.example.portfolio_website_backend.member.dto.request.MemberLoginRequestDTO;
+import com.example.portfolio_website_backend.member.dto.request.MemberUpdateRequestDTO;
 import com.example.portfolio_website_backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +30,16 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody MemberLoginRequestDTO requestDTO){
         return ResponseEntity.ok(SuccessResponse.ok(memberService.login(requestDTO)));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity viewMemberInfo(){
+        return ResponseEntity.ok(SuccessResponse.ok(memberService.getMember()));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/profile")
+    public ResponseEntity updateMemberInfo(@RequestBody MemberUpdateRequestDTO requestDTO, @CurrentMember Member member){
+        return ResponseEntity.ok(SuccessResponse.ok(memberService.updateMember(requestDTO, member)));
     }
 }

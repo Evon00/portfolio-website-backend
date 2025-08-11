@@ -1,6 +1,7 @@
 package com.example.portfolio_website_backend.member.domain;
 
 import com.example.portfolio_website_backend.common.domain.Role;
+import com.example.portfolio_website_backend.member.dto.request.MemberUpdateRequestDTO;
 import com.example.portfolio_website_backend.skill.domain.Skill;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -68,5 +69,13 @@ public class Member {
 
     public void removeMemberSkill(MemberSkill memberSkill) {
         this.memberSkills.remove(memberSkill);
+    }
+
+    public void update(MemberUpdateRequestDTO requestDTO){
+        if(requestDTO.name() != null) this.name = requestDTO.name();
+        if(requestDTO.description() != null) this.description = requestDTO.description();
+        if(requestDTO.githubUrl() != null) this.githubUrl = requestDTO.githubUrl();
+        if(requestDTO.emailUrl() != null) this.emailUrl = requestDTO.emailUrl();
+        if(requestDTO.profileUrl() != null) this.profileUrl = requestDTO.profileUrl();
     }
 }

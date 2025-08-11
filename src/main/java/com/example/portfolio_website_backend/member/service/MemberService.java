@@ -6,7 +6,9 @@ import com.example.portfolio_website_backend.common.security.jwt.JwtProvider;
 import com.example.portfolio_website_backend.member.domain.Member;
 import com.example.portfolio_website_backend.member.dto.request.MemberLoginRequestDTO;
 import com.example.portfolio_website_backend.member.dto.request.MemberRegisterRequestDTO;
+import com.example.portfolio_website_backend.member.dto.request.MemberUpdateRequestDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberLoginResponseDTO;
+import com.example.portfolio_website_backend.member.dto.response.MemberProfileResponseDTO;
 import com.example.portfolio_website_backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,5 +57,31 @@ public class MemberService {
         }
 
         throw new BusinessException(INVALID_LOGIN_CREDENTIALS);
+    }
+
+    /*
+    메인 홈페이지 프로필 소개
+    - [param]
+    - [return] MemberProfileResponseDTO
+     */
+
+    public MemberProfileResponseDTO getMember(){
+        Member member = memberRepository.findById(1L).orElseThrow(
+                () -> new BusinessException(USER_NOT_FOUND)
+        );
+
+        return MemberProfileResponseDTO.fromEntity(member);
+
+    }
+
+    /*
+    프로필 수정
+    - [param] MemberUpdateRequestDTO(Patch) , Member
+    - [return] MemberProfileResponseDTO
+     */
+    @Transactional
+    public MemberProfileResponseDTO updateMember(MemberUpdateRequestDTO requestDTO, Member member){
+        member.update(requestDTO);
+        return MemberProfileResponseDTO.fromEntity(member);
     }
 }
