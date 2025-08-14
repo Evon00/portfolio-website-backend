@@ -24,6 +24,7 @@ public record MemberRegisterRequestDTO(
                 .githubUrl(githubUrl)
                 .emailUrl(emailUrl)
                 .profileUrl(profileUrl)
+                .s3Key(null)
                 .role(role)
                 .build();
     }

@@ -5,6 +5,7 @@ public record MemberUpdateRequestDTO(
         String description,
         String githubUrl,
         String emailUrl,
-        String profileUrl
+        String profileUrl,
+        String s3Key
 ) {
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,5 +42,11 @@ public class MemberController {
     @PatchMapping("/profile")
     public ResponseEntity updateMemberInfo(@RequestBody MemberUpdateRequestDTO requestDTO, @CurrentMember Member member){
         return ResponseEntity.ok(SuccessResponse.ok(memberService.updateMember(requestDTO, member)));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/upload")
+    public ResponseEntity uploadMemberImg(@RequestPart("file") MultipartFile file, @CurrentMember Member member){
+        return ResponseEntity.ok(SuccessResponse.ok(memberService.uploadMemberProfileImg(file, member)));
     }
 }

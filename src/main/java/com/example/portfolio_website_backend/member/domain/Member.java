@@ -41,6 +41,9 @@ public class Member {
     @Column(name = "profile_url")
     private String profileUrl;
 
+    @Column(name = "s3_key")
+    private String s3Key;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -48,7 +51,7 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     List<MemberSkill> memberSkills = new ArrayList<>();
     @Builder
-    public Member(String username, String password, String name, String description, String githubUrl, String emailUrl, String profileUrl, Role role){
+    public Member(String username, String password, String name, String description, String githubUrl, String emailUrl, String profileUrl, String s3Key, Role role){
         this.username = username;
         this.password = password;
         this.name = name;
@@ -56,6 +59,7 @@ public class Member {
         this.githubUrl = githubUrl;
         this.emailUrl = emailUrl;
         this.profileUrl = profileUrl;
+        this.s3Key = s3Key;
         this.role = role;
     }
 
@@ -77,5 +81,11 @@ public class Member {
         if(requestDTO.githubUrl() != null) this.githubUrl = requestDTO.githubUrl();
         if(requestDTO.emailUrl() != null) this.emailUrl = requestDTO.emailUrl();
         if(requestDTO.profileUrl() != null) this.profileUrl = requestDTO.profileUrl();
+        if(requestDTO.s3Key() != null) this.s3Key = requestDTO.s3Key();
+    }
+
+    public void setImageNull(){
+        this.profileUrl = null;
+        this.s3Key = null;
     }
 }
