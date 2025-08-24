@@ -23,7 +23,7 @@ public record MemberRegisterRequestDTO(
         @Schema(description = "사용자 프로필 이미지 URL", example = "123/profile/member/~")
         String profileUrl
 ) {
-    public Member toEntity(PasswordEncoder passwordEncoder){
+    public Member toEntity(PasswordEncoder passwordEncoder) {
         Role role = Role.ADMIN;
 
         return Member.builder()

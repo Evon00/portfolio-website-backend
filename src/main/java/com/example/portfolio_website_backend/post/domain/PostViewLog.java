@@ -21,7 +21,7 @@ public class PostViewLog {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "post_id",nullable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @Column(columnDefinition = "INET", nullable = false)
@@ -33,12 +33,12 @@ public class PostViewLog {
     @Column(nullable = false)
     private String refer;
 
-    @Column(name = "view_at",nullable = false, updatable = false)
+    @Column(name = "view_at", nullable = false, updatable = false)
     @CreatedDate
     private Instant viewedAt;
 
     @Builder
-    public PostViewLog(Post post, String ipAddress, String userAgent, String refer){
+    public PostViewLog(Post post, String ipAddress, String userAgent, String refer) {
         this.post = post;
         this.ipAddress = ipAddress;
         this.userAgent = userAgent;

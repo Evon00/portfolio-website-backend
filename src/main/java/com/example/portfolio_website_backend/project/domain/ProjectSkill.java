@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "project_skill", uniqueConstraints = @UniqueConstraint(columnNames = {"project_id","skill_id"}))
+@Table(name = "project_skill", uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "skill_id"}))
 public class ProjectSkill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,15 +25,16 @@ public class ProjectSkill {
     private Skill skill;
 
     @Builder
-    public ProjectSkill(Project project, Skill skill){
+    public ProjectSkill(Project project, Skill skill) {
         this.project = project;
         this.skill = skill;
     }
 
-    protected void setProject(Project project){
+    protected void setProject(Project project) {
         this.project = project;
     }
-    protected void setSkill(Skill skill){
+
+    protected void setSkill(Skill skill) {
         this.skill = skill;
     }
 }

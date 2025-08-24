@@ -25,7 +25,7 @@ public record MemberProfileResponseDTO(
         List<MemberSkill> memberSkills
 
 ) {
-    public static MemberProfileResponseDTO fromEntity(Member member){
+    public static MemberProfileResponseDTO fromEntity(Member member) {
         return new MemberProfileResponseDTO(
                 member.getId(),
                 member.getName(),

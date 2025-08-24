@@ -37,15 +37,14 @@ public class CurrentMemberArgumentResolver implements HandlerMethodArgumentResol
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null ||
-            !authentication.isAuthenticated() ||
-                authentication instanceof AnonymousAuthenticationToken){
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication instanceof AnonymousAuthenticationToken) {
             return null;
         }
 
         Object principal = authentication.getPrincipal();
-        if(principal instanceof CustomUserDetails){
-            CustomUserDetails userDetails = (CustomUserDetails) principal;
+        if (principal instanceof CustomUserDetails userDetails) {
             return memberRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                     () -> new BusinessException(ExceptionCode.USER_NOT_FOUND)
             );

@@ -52,11 +52,11 @@ public class Project {
     @Column(nullable = false)
     private boolean isFeatured;
 
-    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProjectSkill> projectSkills = new ArrayList<>();
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<ProjectSkill> projectSkills = new ArrayList<>();
 
     @Builder
-    public Project(Member member, String title, String summary, String content, String githubUrl, String demoUrl, Instant startDate, Instant endDate, String slug){
+    public Project(Member member, String title, String summary, String content, String githubUrl, String demoUrl, Instant startDate, Instant endDate, String slug) {
         this.member = member;
         this.title = title;
         this.summary = summary;
@@ -69,7 +69,7 @@ public class Project {
         this.isFeatured = false;
     }
 
-    public void addProjectSkill(Skill skill){
+    public void addProjectSkill(Skill skill) {
         ProjectSkill projectSkill = ProjectSkill.builder()
                 .project(this)
                 .skill(skill)

@@ -61,11 +61,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        try{
+        try {
 
             String accessToken = resolveToken(request);
 
-            if(accessToken != null && jwtProvider.isValidToken(accessToken)){
+            if (accessToken != null && jwtProvider.isValidToken(accessToken)) {
                 UserDetails userDetails = getUserDetails(accessToken);
 
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, accessToken, userDetails.getAuthorities());
@@ -75,11 +75,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-        } catch (AuthException e){
+        } catch (AuthException e) {
             response.setContentType("application/json;charset=UTF-8");
             ExceptionResponse exceptionResponse = new ExceptionResponse(e.getErrorCode(), e.getMessage());
             response.setStatus(e.getStatus().value());
-            objectMapper.writeValue(response.getWriter(),exceptionResponse);
+            objectMapper.writeValue(response.getWriter(), exceptionResponse);
         }
     }
 
@@ -104,7 +104,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
 

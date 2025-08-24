@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,7 +42,7 @@ public class MemberController {
     @Operation(summary = "사용자 로그인", description = "ID, PW를 통해 사용자가 로그인을 합니다.")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "사용자 로그인 요청 DTO", required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberLoginRequestDTO.class)))
     @PostMapping("/login")
-    public ResponseEntity<SuccessResponse<MemberLoginResponseDTO>> login(@RequestBody MemberLoginRequestDTO requestDTO){
+    public ResponseEntity<SuccessResponse<MemberLoginResponseDTO>> login(@RequestBody MemberLoginRequestDTO requestDTO) {
         return ResponseEntity.ok(SuccessResponse.ok(memberService.login(requestDTO)));
     }
 
@@ -52,7 +51,7 @@ public class MemberController {
             description = "사이트 관리자의 프로필을 조회합니다."
     )
     @GetMapping("/profile")
-    public ResponseEntity<SuccessResponse<MemberProfileResponseDTO>> viewMemberInfo(){
+    public ResponseEntity<SuccessResponse<MemberProfileResponseDTO>> viewMemberInfo() {
         return ResponseEntity.ok(SuccessResponse.ok(memberService.getMember()));
     }
 
@@ -71,7 +70,7 @@ public class MemberController {
     @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/profile")
-    public ResponseEntity<SuccessResponse<MemberProfileResponseDTO>> updateMemberInfo(@RequestBody MemberUpdateRequestDTO requestDTO, @CurrentMember Member member){
+    public ResponseEntity<SuccessResponse<MemberProfileResponseDTO>> updateMemberInfo(@RequestBody MemberUpdateRequestDTO requestDTO, @CurrentMember Member member) {
         return ResponseEntity.ok(SuccessResponse.ok(memberService.updateMember(requestDTO, member)));
     }
 
@@ -80,7 +79,7 @@ public class MemberController {
     @SecurityRequirement(name = "Authorization")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/upload")
-    public ResponseEntity<SuccessResponse<MemberProfileURLResponseDTO>> uploadMemberImg(@RequestPart("file") MultipartFile file, @CurrentMember Member member){
+    public ResponseEntity<SuccessResponse<MemberProfileURLResponseDTO>> uploadMemberImg(@RequestPart("file") MultipartFile file, @CurrentMember Member member) {
         return ResponseEntity.ok(SuccessResponse.ok(memberService.uploadMemberProfileImg(file, member)));
     }
 }
