@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final CurrentMemberArgumentResolver currentMemberArgumentResolver;
 
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers){
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(currentMemberArgumentResolver);
     }
 }

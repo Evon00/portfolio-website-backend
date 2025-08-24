@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "post_skill", uniqueConstraints = @UniqueConstraint(columnNames = {"post_id","skill_id"}))
+@Table(name = "post_skill", uniqueConstraints = @UniqueConstraint(columnNames = {"post_id", "skill_id"}))
 public class PostSkill {
 
     @Id
@@ -26,15 +26,16 @@ public class PostSkill {
     private Skill skill;
 
     @Builder
-    public PostSkill(Post post, Skill skill){
+    public PostSkill(Post post, Skill skill) {
         this.post = post;
         this.skill = skill;
     }
 
-    protected void setPost(Post post){
+    protected void setPost(Post post) {
         this.post = post;
     }
-    protected void setSkill(Skill skill){
+
+    protected void setSkill(Skill skill) {
         this.skill = skill;
     }
 }

@@ -14,7 +14,7 @@ public record ImageMetaDataDTO(
 ) {
 
     @Builder
-    public ImageMetaDataDTO(String originalFilename, String uploadUrl, String s3Key, int imageWidth, int imageHeight, Long fileSize, String fileExtension){
+    public ImageMetaDataDTO(String originalFilename, String uploadUrl, String s3Key, int imageWidth, int imageHeight, Long fileSize, String fileExtension) {
         this.originalFilename = originalFilename;
         this.uploadUrl = uploadUrl;
         this.s3Key = s3Key;

@@ -48,10 +48,11 @@ public class Member {
     @Column(nullable = false)
     private Role role;
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     List<MemberSkill> memberSkills = new ArrayList<>();
+
     @Builder
-    public Member(String username, String password, String name, String description, String githubUrl, String emailUrl, String profileUrl, String s3Key, Role role){
+    public Member(String username, String password, String name, String description, String githubUrl, String emailUrl, String profileUrl, String s3Key, Role role) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -63,7 +64,7 @@ public class Member {
         this.role = role;
     }
 
-    public void addMemberSkill(Skill skill){
+    public void addMemberSkill(Skill skill) {
         MemberSkill memberSkill = MemberSkill.builder()
                 .member(this)
                 .skill(skill)
@@ -75,16 +76,16 @@ public class Member {
         this.memberSkills.remove(memberSkill);
     }
 
-    public void update(MemberUpdateRequestDTO requestDTO){
-        if(requestDTO.name() != null) this.name = requestDTO.name();
-        if(requestDTO.description() != null) this.description = requestDTO.description();
-        if(requestDTO.githubUrl() != null) this.githubUrl = requestDTO.githubUrl();
-        if(requestDTO.emailUrl() != null) this.emailUrl = requestDTO.emailUrl();
-        if(requestDTO.profileUrl() != null) this.profileUrl = requestDTO.profileUrl();
-        if(requestDTO.s3Key() != null) this.s3Key = requestDTO.s3Key();
+    public void update(MemberUpdateRequestDTO requestDTO) {
+        if (requestDTO.name() != null) this.name = requestDTO.name();
+        if (requestDTO.description() != null) this.description = requestDTO.description();
+        if (requestDTO.githubUrl() != null) this.githubUrl = requestDTO.githubUrl();
+        if (requestDTO.emailUrl() != null) this.emailUrl = requestDTO.emailUrl();
+        if (requestDTO.profileUrl() != null) this.profileUrl = requestDTO.profileUrl();
+        if (requestDTO.s3Key() != null) this.s3Key = requestDTO.s3Key();
     }
 
-    public void setImageNull(){
+    public void setImageNull() {
         this.profileUrl = null;
         this.s3Key = null;
     }

@@ -34,7 +34,7 @@ public class DailyPostViews {
     private Instant createdAt;
 
     @Builder
-    public DailyPostViews(Post post, Instant viewDate, Long viewCount, Long uniqueVisitors, Instant createdAt){
+    public DailyPostViews(Post post, Instant viewDate, Long viewCount, Long uniqueVisitors, Instant createdAt) {
         this.post = post;
         this.viewDate = viewDate;
         this.viewCount = viewCount;

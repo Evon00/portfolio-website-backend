@@ -46,7 +46,7 @@ public class Post {
     private Instant createdAt;
 
     @LastModifiedDate
-    @Column(name = "modified_at",nullable = false)
+    @Column(name = "modified_at", nullable = false)
     private Instant modifiedAt;
 
     @Column(nullable = false, unique = true)
@@ -55,11 +55,11 @@ public class Post {
     @Column(nullable = false)
     private Long view;
 
-    @OneToMany(mappedBy = "post",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostSkill> postSkills = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<PostSkill> postSkills = new ArrayList<>();
 
     @Builder
-    public Post(Member member, String title, String summary, String content, String readTime, String slug){
+    public Post(Member member, String title, String summary, String content, String readTime, String slug) {
         this.member = member;
         this.title = title;
         this.summary = summary;
@@ -69,7 +69,7 @@ public class Post {
         this.view = 0L;
     }
 
-    public void addPostSkill(Skill skill){
+    public void addPostSkill(Skill skill) {
         PostSkill postSkill = PostSkill.builder()
                 .post(this)
                 .skill(skill)

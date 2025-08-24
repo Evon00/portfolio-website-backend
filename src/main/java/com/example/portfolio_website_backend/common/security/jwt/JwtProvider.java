@@ -15,7 +15,6 @@ import java.util.Base64;
 import java.util.Date;
 
 
-
 /*
 JwtProvider
 - JWT를 생성 및 검증 하는 기능
@@ -28,8 +27,8 @@ public class JwtProvider {
 
     public JwtProvider(
             @Value("${jwt.secret}") String key,
-            @Value("${jwt.expirationTime}")Long accessExpirationTime
-    ){
+            @Value("${jwt.expirationTime}") Long accessExpirationTime
+    ) {
         byte[] keyBytes = Base64.getDecoder().decode(key);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.accessExpirationTime = accessExpirationTime;
@@ -40,7 +39,7 @@ public class JwtProvider {
      - [param] JwtMemberInfo : JWT에 담을 사용자 정보
      - [return] Access Token String
      */
-    public String createAccessToken(JwtMemberInfo memberInfo){
+    public String createAccessToken(JwtMemberInfo memberInfo) {
         return createToken(memberInfo, accessExpirationTime);
     }
 
@@ -49,7 +48,7 @@ public class JwtProvider {
     - [param] JwtMemberInfo : JWT에 담을 사용자 정보 , accessExpirationTime : 토큰 유효기간 (s)
     - [return] JWT String
      */
-    private String createToken(JwtMemberInfo memberInfo, long accessExpirationTime){
+    private String createToken(JwtMemberInfo memberInfo, long accessExpirationTime) {
         Claims claims = Jwts.claims();
         claims.put("memberId", memberInfo.memberId());
         claims.put("username", memberInfo.username());
@@ -72,12 +71,12 @@ public class JwtProvider {
     - [param] String token
     - [return] IsValidate
      */
-    public boolean isValidToken(String token){
+    public boolean isValidToken(String token) {
 
         try {
             parseClaims(token);
             return true;
-        } catch (Exception e){
+        } catch (Exception e) {
             // 예외 처리
         }
         return false;
@@ -89,14 +88,14 @@ public class JwtProvider {
     - [return] JWT Claims
      */
 
-    private Claims parseClaims(String accessToken){
+    private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(accessToken)
                     .getBody();
-        } catch (ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             //유효기간 만료
             return e.getClaims();
         } //오류 코드 추가

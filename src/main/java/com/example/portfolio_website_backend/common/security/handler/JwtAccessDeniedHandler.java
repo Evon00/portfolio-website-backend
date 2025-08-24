@@ -27,6 +27,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json;charset=UTF-8");
         ExceptionResponse exceptionResponse = new ExceptionResponse(1006, "요청에 대한 권한이 없습니다.");
         response.setStatus(403);
-        objectMapper.writeValue(response.getWriter(),exceptionResponse);
+        objectMapper.writeValue(response.getWriter(), exceptionResponse);
     }
 }

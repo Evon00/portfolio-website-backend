@@ -57,8 +57,8 @@ public class MemberService {
                 () -> new BusinessException(USER_NOT_FOUND)
         );
 
-        if(passwordEncoder.matches(requestDTO.password(), member.getPassword())){
-            JwtMemberInfo jwtMemberInfo = new JwtMemberInfo(member.getId(), member.getUsername(),member.getName(), member.getRole());
+        if (passwordEncoder.matches(requestDTO.password(), member.getPassword())) {
+            JwtMemberInfo jwtMemberInfo = new JwtMemberInfo(member.getId(), member.getUsername(), member.getName(), member.getRole());
             return new MemberLoginResponseDTO(jwtProvider.createAccessToken(jwtMemberInfo));
         }
 
@@ -71,7 +71,7 @@ public class MemberService {
     - [return] MemberProfileResponseDTO
      */
 
-    public MemberProfileResponseDTO getMember(){
+    public MemberProfileResponseDTO getMember() {
         Member member = memberRepository.findById(1L).orElseThrow(
                 () -> new BusinessException(USER_NOT_FOUND)
         );
@@ -86,7 +86,7 @@ public class MemberService {
     - [return] MemberProfileResponseDTO
      */
     @Transactional
-    public MemberProfileResponseDTO updateMember(MemberUpdateRequestDTO requestDTO, Member member){
+    public MemberProfileResponseDTO updateMember(MemberUpdateRequestDTO requestDTO, Member member) {
         member.update(requestDTO);
         return MemberProfileResponseDTO.fromEntity(member);
     }
@@ -103,7 +103,7 @@ public class MemberService {
 
         try {
 
-            if(member.getProfileUrl() != null){
+            if (member.getProfileUrl() != null) {
                 s3Uploader.delete(member.getS3Key());
                 member.setImageNull();
             }
@@ -113,7 +113,7 @@ public class MemberService {
             throw new BusinessException(FAILED_IMG_UPLOAD);
         }
 
-        if(dto != null) {
+        if (dto != null) {
             return new MemberProfileURLResponseDTO(dto.uploadUrl(), dto.s3Key());
         } else return null;
 
