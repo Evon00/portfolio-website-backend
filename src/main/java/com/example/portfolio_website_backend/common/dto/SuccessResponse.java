@@ -15,11 +15,15 @@ public record SuccessResponse<T>(
         @Schema(description = "응답 성공시 반환할 데이터")
         T data
 ) {
-    public static <T> SuccessResponse<T> of (int code, String message, T data){
+    public static <T> SuccessResponse<T> of(int code, String message, T data) {
         return new SuccessResponse<>(code, message, data);
     }
 
-    public static <T> SuccessResponse<T> ok (T data){
-        return new SuccessResponse<>(200,"요청이 성공적으로 처리되었습니다.",data);
+    public static <T> SuccessResponse<T> ok(T data) {
+        return new SuccessResponse<>(200, "요청이 성공적으로 처리되었습니다.", data);
+    }
+
+    public static <T> SuccessResponse<T> delete() {
+        return new SuccessResponse<>(204, "성공적으로 삭제되었습니다.", null);
     }
 }
