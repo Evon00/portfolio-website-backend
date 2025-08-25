@@ -72,10 +72,6 @@ public class Member {
         memberSkills.add(memberSkill);
     }
 
-    public void removeMemberSkill(MemberSkill memberSkill) {
-        this.memberSkills.remove(memberSkill);
-    }
-
     public void update(MemberUpdateRequestDTO requestDTO) {
         if (requestDTO.name() != null) this.name = requestDTO.name();
         if (requestDTO.description() != null) this.description = requestDTO.description();

@@ -6,13 +6,16 @@ import com.example.portfolio_website_backend.common.security.dto.JwtMemberInfo;
 import com.example.portfolio_website_backend.common.security.jwt.JwtProvider;
 import com.example.portfolio_website_backend.common.service.S3Uploader;
 import com.example.portfolio_website_backend.member.domain.Member;
-import com.example.portfolio_website_backend.member.dto.request.MemberLoginRequestDTO;
-import com.example.portfolio_website_backend.member.dto.request.MemberRegisterRequestDTO;
-import com.example.portfolio_website_backend.member.dto.request.MemberUpdateRequestDTO;
+import com.example.portfolio_website_backend.member.dto.request.*;
 import com.example.portfolio_website_backend.member.dto.response.MemberLoginResponseDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberProfileResponseDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberProfileURLResponseDTO;
 import com.example.portfolio_website_backend.member.repository.MemberRepository;
+import com.example.portfolio_website_backend.member.repository.MemberSkillRepository;
+import com.example.portfolio_website_backend.skill.domain.Skill;
+import com.example.portfolio_website_backend.skill.dto.response.SkillListResponseDTO;
+import com.example.portfolio_website_backend.skill.dto.response.SkillResponseDTO;
+import com.example.portfolio_website_backend.skill.repository.SkillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import static com.example.portfolio_website_backend.common.exception.ExceptionCode.*;
 
@@ -30,6 +36,8 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final SkillRepository skillRepository;
+    private final MemberSkillRepository memberSkillRepository;
     private final JwtProvider jwtProvider;
     private final S3Uploader s3Uploader;
 
@@ -117,5 +125,60 @@ public class MemberService {
             return new MemberProfileURLResponseDTO(dto.uploadUrl(), dto.s3Key());
         } else return null;
 
+    }
+
+    @Transactional
+    public SkillListResponseDTO addMemberSkills(MemberSkillAddRequestDTO requestDTO, Member member) {
+
+        List<Skill> skills = skillRepository.findAllById(requestDTO.skillIds());
+        if(skills.size() != requestDTO.skillIds().size())
+            throw new BusinessException(SKILL_NOT_FOUND);
+
+
+        List<Long> existingSkills = memberSkillRepository.findByMember(member)
+                .stream()
+                .map(memberSkill -> memberSkill.getSkill().getId())
+                .toList();
+
+        List<Skill> newSkills = skills
+                .stream()
+                .filter(skill -> !existingSkills.contains(skill.getId()))
+                .toList();
+
+        if(newSkills.isEmpty())
+            throw new BusinessException(ALL_SKILLS_ALREADY_ADDED);
+
+        newSkills.forEach(member::addMemberSkill);
+        memberRepository.save(member);
+
+        List<SkillResponseDTO> dtos = newSkills.stream()
+                .sorted(Comparator.comparing(Skill::getId))
+                .map(SkillResponseDTO::fromEntity)
+                .toList();
+
+        return new SkillListResponseDTO(dtos);
+    }
+
+    @Transactional
+    public SkillListResponseDTO updateMemberSkills(MemberSkillUpdateRequestDTO requestDTO, Member member) {
+        member.getMemberSkills().clear();
+        memberSkillRepository.deleteByMember(member);
+
+        if(requestDTO.skillIds().isEmpty())
+            return new SkillListResponseDTO(Collections.emptyList());
+
+        List<Skill> newSkills = skillRepository.findAllById(requestDTO.skillIds());
+        if(newSkills.size() != requestDTO.skillIds().size())
+            throw new BusinessException(SKILL_NOT_FOUND);
+
+        newSkills.forEach(member::addMemberSkill);
+        memberRepository.save(member);
+
+        List<SkillResponseDTO> dtos = newSkills.stream()
+                .sorted(Comparator.comparing(Skill::getId))
+                .map(SkillResponseDTO::fromEntity)
+                .toList();
+
+        return new SkillListResponseDTO(dtos);
     }
 }

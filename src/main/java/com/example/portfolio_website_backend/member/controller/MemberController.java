@@ -4,11 +4,14 @@ import com.example.portfolio_website_backend.common.dto.SuccessResponse;
 import com.example.portfolio_website_backend.common.security.annotation.CurrentMember;
 import com.example.portfolio_website_backend.member.domain.Member;
 import com.example.portfolio_website_backend.member.dto.request.MemberLoginRequestDTO;
+import com.example.portfolio_website_backend.member.dto.request.MemberSkillAddRequestDTO;
+import com.example.portfolio_website_backend.member.dto.request.MemberSkillUpdateRequestDTO;
 import com.example.portfolio_website_backend.member.dto.request.MemberUpdateRequestDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberLoginResponseDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberProfileResponseDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberProfileURLResponseDTO;
 import com.example.portfolio_website_backend.member.service.MemberService;
+import com.example.portfolio_website_backend.skill.dto.response.SkillListResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -81,5 +84,17 @@ public class MemberController {
     @PostMapping("/upload")
     public ResponseEntity<SuccessResponse<MemberProfileURLResponseDTO>> uploadMemberImg(@RequestPart("file") MultipartFile file, @CurrentMember Member member) {
         return ResponseEntity.ok(SuccessResponse.ok(memberService.uploadMemberProfileImg(file, member)));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/skill")
+    public ResponseEntity<SuccessResponse<SkillListResponseDTO>> addMemberSkills(@RequestBody MemberSkillAddRequestDTO requestDTO, @CurrentMember Member member){
+        return ResponseEntity.ok(SuccessResponse.ok(memberService.addMemberSkills(requestDTO, member)));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/skill")
+    public ResponseEntity<SuccessResponse<SkillListResponseDTO>> updateMemberSkills(@RequestBody MemberSkillUpdateRequestDTO requestDTO, @CurrentMember Member member){
+        return ResponseEntity.ok(SuccessResponse.ok(memberService.updateMemberSkills(requestDTO,member)));
     }
 }
