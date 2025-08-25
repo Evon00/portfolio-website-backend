@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -180,6 +181,7 @@ public class SkillService {
 
         List<SkillResponseDTO> dto = memberSkills
                 .stream()
+                .sorted(Comparator.comparing(memberSkill -> memberSkill.getSkill().getId()))
                 .map(memberSkill -> SkillResponseDTO.fromEntity(memberSkill.getSkill()))
                 .toList();
 
