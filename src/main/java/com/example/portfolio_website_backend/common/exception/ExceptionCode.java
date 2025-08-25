@@ -30,7 +30,8 @@ public enum ExceptionCode {
     USER_NOT_FOUND(2002, NOT_FOUND, "존재하지 않은 사용자입니다."),
 
     //기술 스택 관련 (2101 ~ 2200)
-    SKILL_NOT_FOUND(2101, NOT_FOUND, "존재하지 않은 기술 스택입니다.");
+    SKILL_NOT_FOUND(2101, NOT_FOUND, "존재하지 않은 기술 스택입니다."),
+    ALL_SKILLS_ALREADY_ADDED(2102, BAD_REQUEST, "해당 기술 스택은 이미 추가되어 있습니다.");
 
 
     private final int errorCode;
