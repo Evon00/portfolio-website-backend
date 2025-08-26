@@ -72,14 +72,13 @@ public class S3Uploader {
             throw new BusinessException(ExceptionCode.INVALID_IMG_EXT);
         }
 
-        String contentType = Optional.ofNullable(file.getContentType())
-                .orElseGet(() -> switch (ext) {
-                    case "jpg", "jpeg" -> "image/jpeg";
-                    case "png" -> "image/png";
-                    case "webp" -> "image/webp";
-                    case "svg" -> "image/svg";
-                    default -> "application/octet-stream";
-                });
+        String contentType = switch (ext){
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "webp" -> "image/webp";
+            case "svg" -> "image/svg+xml";
+            default -> "application/octet-stream";
+        };
 
         String key = generateS3Key(keyPrefix, slug, ext);
         Path temp = Files.createTempFile("upload-", "." + ext);
