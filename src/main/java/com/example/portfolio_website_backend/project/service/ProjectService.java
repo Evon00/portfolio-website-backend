@@ -275,6 +275,22 @@ public class ProjectService {
         return new ProjectSlugSearchResponseDTO(slugs);
     }
 
+    /**
+     * 프로젝트 상세 조회 (슬러그)
+     *
+     * @param slug 상세 조회할 프로젝트의 슬러그
+     * @return 해당되는 프로젝트의 상세 정보 (프로젝트, 기술 스택, 이미지)
+     * @throws BusinessException 해당되는 프로젝트가 없을 시 발생
+     */
+    public ProjectResponseDTO getProjectDetail(String slug) {
+        Project project = projectRepository.findProjectBySlug(slug).orElseThrow(
+                () -> new BusinessException(ExceptionCode.PROJECT_NOT_FOUND));
+
+        List<ProjectImage> projectImages = projectImageRepository.findByProjectIdOrderByDisplayOrder(project.getId());
+
+        return ProjectResponseDTO.fromEntity(project,project.getProjectSkills(),projectImages);
+    }
+
     record ProjectImageWithOrder(MultipartFile file, int order) {
     }
 }

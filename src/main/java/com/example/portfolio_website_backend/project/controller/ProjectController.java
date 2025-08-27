@@ -87,4 +87,12 @@ public class ProjectController {
             @RequestParam String keyword){
         return ResponseEntity.ok(SuccessResponse.ok(projectService.searchProjectSlug(keyword)));
     }
+
+    @Operation(summary = "프로젝트 상세 조회 (슬러그)", description = "슬러그를 이용해 프로젝트 상세 페이지를 조회합니다.")
+    @GetMapping(value = "/slug/{slug}")
+    public ResponseEntity<SuccessResponse<ProjectResponseDTO>> getProjectDetail(
+            @Parameter(description = "프로젝트 슬러그")
+            @PathVariable String slug){
+        return ResponseEntity.ok(SuccessResponse.ok(projectService.getProjectDetail(slug)));
+    }
 }
