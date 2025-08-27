@@ -205,7 +205,7 @@ public class ProjectService {
                     .sorted(Comparator.comparing(ProjectImageWithOrder::order))
                     .toList();
 
-            saveImageToS3AndDB(filesWithOrder, requestDTO.slug(), project, requestDTO.displayOrder());
+            saveImageToS3AndDB(filesWithOrder, project.getSlug(), project, requestDTO.displayOrder());
         }
         //project image 수정
 

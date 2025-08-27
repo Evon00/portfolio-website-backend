@@ -13,7 +13,6 @@ public record ProjectUpdateRequestDTO(
         Instant startDate,
         Instant endDate,
         List<Long> skillIds,
-        List<Integer> displayOrder,
-        String slug
+        List<Integer> displayOrder
 ) {
 }
