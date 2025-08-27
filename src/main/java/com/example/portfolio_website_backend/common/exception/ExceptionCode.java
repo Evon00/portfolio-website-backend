@@ -20,20 +20,24 @@ public enum ExceptionCode {
     INVALID_DATA(1007, BAD_REQUEST, "요청 본문이 비어있거나 잘못된 형식입니다."),
 
     //이미지 관련 (1101 ~ 1200)
-    INVALID_IMG_EXT(1101, UNSUPPORTED_MEDIA_TYPE, "허용되지 않은 이미지 확장자입니다."),
+    INVALID_IMG_EXT(1101, UNSUPPORTED_MEDIA_TYPE, "허용되지 않는 이미지 확장자입니다."),
     FAILED_IMG_DECODE(1102, UNPROCESSABLE_ENTITY, "이미지 디코딩에 실패하였습니다."),
     FAILED_IMG_DELETE(1103, EXPECTATION_FAILED, "이미지 삭제에 실패하였습니다."),
     FAILED_IMG_UPLOAD(1104, EXPECTATION_FAILED, "이미지 업로드에 실패하였습니다."),
+    FILE_ORDER_MISMATCH(1105,BAD_REQUEST, "이미지가 일부 누락되었거나 이미지의 순서가 정해져있지 않습니다."),
 
     //회원 관련 (2001 ~ 2100)
     INVALID_LOGIN_CREDENTIALS(2001, UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
-    USER_NOT_FOUND(2002, NOT_FOUND, "존재하지 않은 사용자입니다."),
+    USER_NOT_FOUND(2002, NOT_FOUND, "존재하지 않는 사용자입니다."),
 
     //기술 스택 관련 (2101 ~ 2200)
-    SKILL_NOT_FOUND(2101, NOT_FOUND, "존재하지 않은 기술 스택입니다."),
-    ALL_SKILLS_ALREADY_ADDED(2102, BAD_REQUEST, "해당 기술 스택은 이미 추가되어 있습니다.");
+    SKILL_NOT_FOUND(2101, NOT_FOUND, "존재하지 않는 기술 스택입니다."),
+    ALL_SKILLS_ALREADY_ADDED(2102, BAD_REQUEST, "해당 기술 스택은 이미 추가되어 있습니다."),
 
+    //프로젝트 관련 (2201 ~ 2300)
+    PROJECT_NOT_FOUND(2201, NOT_FOUND, "존재하지 않는 프로젝트입니다.")
 
+    ;
     private final int errorCode;
     private final HttpStatus httpStatus;
     private final String message;
