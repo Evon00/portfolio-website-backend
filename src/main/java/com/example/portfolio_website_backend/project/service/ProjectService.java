@@ -261,6 +261,20 @@ public class ProjectService {
         }
     }
 
+    /**
+     * 프로젝트 슬러그 조회
+     *
+     * @param keyword 검색할 slug
+     * @return keyword로 시작하는 slug를 반환
+     */
+    public ProjectSlugSearchResponseDTO searchProjectSlug(String keyword) {
+        List<Project> projects = projectRepository.findProjectsBySlugStartingWith(keyword);
+        List<String> slugs = projects.stream()
+                .map(Project::getSlug)
+                .toList();
+        return new ProjectSlugSearchResponseDTO(slugs);
+    }
+
     record ProjectImageWithOrder(MultipartFile file, int order) {
     }
 }

@@ -5,10 +5,7 @@ import com.example.portfolio_website_backend.common.security.annotation.CurrentM
 import com.example.portfolio_website_backend.member.domain.Member;
 import com.example.portfolio_website_backend.project.dto.request.ProjectAddRequestDTO;
 import com.example.portfolio_website_backend.project.dto.request.ProjectUpdateRequestDTO;
-import com.example.portfolio_website_backend.project.dto.response.ProjectAddResponseDTO;
-import com.example.portfolio_website_backend.project.dto.response.ProjectDeleteResponseDTO;
-import com.example.portfolio_website_backend.project.dto.response.ProjectPageResponseDTO;
-import com.example.portfolio_website_backend.project.dto.response.ProjectUpdateResponseDTO;
+import com.example.portfolio_website_backend.project.dto.response.*;
 import com.example.portfolio_website_backend.project.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -81,5 +78,13 @@ public class ProjectController {
             @RequestPart(value = "files", required = false) List<MultipartFile> files,
             @CurrentMember Member member) {
         return ResponseEntity.ok(SuccessResponse.ok(projectService.updateProject(id, requestDTO, files, member)));
+    }
+
+    @Operation(summary = "프로젝트 슬러그 검색", description = "keyword로 시작하는 프로젝트 슬러그를 조회합니다.")
+    @GetMapping(value = "/search")
+    public ResponseEntity<SuccessResponse<ProjectSlugSearchResponseDTO>> searchProjectSlug(
+            @Parameter(description = "검색할 keyword")
+            @RequestParam String keyword){
+        return ResponseEntity.ok(SuccessResponse.ok(projectService.searchProjectSlug(keyword)));
     }
 }
