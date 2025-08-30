@@ -13,10 +13,10 @@ import java.util.List;
 
 @Repository
 public interface PostViewLogRepository extends JpaRepository<PostViewLog, Long> {
-    @Query("SELECT new com.example.portfolio_website_backend.post.dto.response.DailyViewStats(pvl.post, COUNT(pvl), COUNT(DISTINCT pvl.ipAddress)) " +
+    @Query("SELECT new com.example.portfolio_website_backend.post.dto.response.DailyViewStats(p, COUNT(pvl), COUNT(DISTINCT pvl.ipAddress)) " +
             "FROM Post p " +
             "LEFT JOIN PostViewLog pvl ON pvl.post = p AND pvl.viewedAt BETWEEN :startDate AND :endDate " +
-            "GROUP BY pvl.post")
+            "GROUP BY p.id")
     List<DailyViewStats> getPostViewLogsByViewedAtRange(@Param("startDate") Instant startDate, @Param("endDate") Instant endDate);
 
     boolean existsByPostAndIpAddressAndViewedAtAfter(Post post, String ipAddress, Instant after);

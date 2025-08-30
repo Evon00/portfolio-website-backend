@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -77,12 +78,13 @@ public class ViewService {
      * 전날 게시글의 조회수 집계후 데이터 저장
      *
      */
-    @Scheduled(cron = "0 5 0 * * ?")
+    @Scheduled(cron = "0 5 0 * * ?", zone = "Asia/Seoul")
     @Transactional
     public void aggregateDailyViews() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        Instant startOfDay = yesterday.atStartOfDay(ZoneOffset.UTC).toInstant();
-        Instant endOfDay = yesterday.atTime(23, 59, 59).atZone(ZoneOffset.UTC).toInstant();
+        ZoneId zone = ZoneId.of("Asia/Seoul");
+        Instant startOfDay = yesterday.atStartOfDay(zone).toInstant();
+        Instant endOfDay = yesterday.atTime(23, 59, 59).atZone(zone).toInstant();
 
         List<DailyViewStats> logs = postViewLogRepository.getPostViewLogsByViewedAtRange(startOfDay, endOfDay);
 
