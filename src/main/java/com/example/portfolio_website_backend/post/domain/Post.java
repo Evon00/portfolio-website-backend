@@ -1,6 +1,7 @@
 package com.example.portfolio_website_backend.post.domain;
 
 import com.example.portfolio_website_backend.member.domain.Member;
+import com.example.portfolio_website_backend.post.dto.request.PostUpdateRequestDTO;
 import com.example.portfolio_website_backend.skill.domain.Skill;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -58,6 +59,11 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<PostSkill> postSkills = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<PostViewLog> postViewLogs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<DailyPostViews> dailyPostViews = new ArrayList<>();
     @Builder
     public Post(Member member, String title, String summary, String content, String readTime, String slug) {
         this.member = member;
@@ -77,8 +83,15 @@ public class Post {
         this.postSkills.add(postSkill);
     }
 
-    public void removePostSkill(PostSkill postSkill) {
-        this.postSkills.remove(postSkill);
+    public void update(PostUpdateRequestDTO requestDTO) {
+        if (requestDTO.title() != null) this.title = requestDTO.title();
+        if (requestDTO.summary() != null) this.summary = requestDTO.summary();
+        if (requestDTO.content() != null) this.content = requestDTO.content();
+        if (requestDTO.readTime() != null) this.readTime = requestDTO.readTime();
+    }
+
+    public void incrementView() {
+        this.view++;
     }
 
 }
