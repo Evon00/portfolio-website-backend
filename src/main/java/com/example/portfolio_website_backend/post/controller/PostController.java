@@ -59,15 +59,17 @@ public class PostController {
             @Parameter(name = "page", description = "현재 page 값, default = 0"),
             @Parameter(name = "size", description = "한 페이지의 데이터 크기, default = 12"),
             @Parameter(name = "sortBy", description = "정렬 기준, default = createdAt (createdAt || view)"),
-            @Parameter(name = "sortDir", description = "정렬 순서 , default = desc (desc || asc)")
+            @Parameter(name = "sortDir", description = "정렬 순서 , default = desc (desc || asc)"),
+            @Parameter(name = "skillName", description = "게시글 기술 스택 필터 (optional)")
     })
     @GetMapping
     public ResponseEntity<SuccessResponse<PostPageResponseDTO>> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-        return ResponseEntity.ok(SuccessResponse.ok(postService.getAllPosts(page, size, sortBy, sortDir)));
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) String skillName) {
+        return ResponseEntity.ok(SuccessResponse.ok(postService.getAllPosts(page, size, sortBy, sortDir, skillName)));
     }
 
     @Operation(summary = "게시글 조회 - 슬러그", description = "슬러그를 통해 게시글을 조회하고, 조회수가 증가됩니다.")

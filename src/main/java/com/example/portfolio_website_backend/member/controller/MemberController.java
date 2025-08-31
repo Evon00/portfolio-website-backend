@@ -3,15 +3,13 @@ package com.example.portfolio_website_backend.member.controller;
 import com.example.portfolio_website_backend.common.dto.SuccessResponse;
 import com.example.portfolio_website_backend.common.security.annotation.CurrentMember;
 import com.example.portfolio_website_backend.member.domain.Member;
-import com.example.portfolio_website_backend.member.dto.request.MemberLoginRequestDTO;
-import com.example.portfolio_website_backend.member.dto.request.MemberSkillAddRequestDTO;
-import com.example.portfolio_website_backend.member.dto.request.MemberSkillUpdateRequestDTO;
-import com.example.portfolio_website_backend.member.dto.request.MemberUpdateRequestDTO;
+import com.example.portfolio_website_backend.member.dto.request.*;
 import com.example.portfolio_website_backend.member.dto.response.MemberLoginResponseDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberProfileResponseDTO;
 import com.example.portfolio_website_backend.member.dto.response.MemberProfileURLResponseDTO;
 import com.example.portfolio_website_backend.member.service.MemberService;
 import com.example.portfolio_website_backend.skill.dto.response.SkillListResponseDTO;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,14 +32,13 @@ public class MemberController {
     private final MemberService memberService;
 
 
-    /*
-     - 회원가입의 경우, Admin 계정 만들기용이기에, 사용하는 일이 없을 경우 비활성화
+    //회원가입의 경우, Admin 계정 만들기용이기에, 사용하는 일이 없을 경우 비활성화
     @Hidden
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody MemberRegisterRequestDTO requestDTO){
         return ResponseEntity.ok(SuccessResponse.ok(memberService.register(requestDTO)));
     }
-     */
+
 
     @Operation(summary = "사용자 로그인", description = "ID, PW를 통해 사용자가 로그인을 합니다.")
     @io.swagger.v3.oas.annotations.parameters.RequestBody(

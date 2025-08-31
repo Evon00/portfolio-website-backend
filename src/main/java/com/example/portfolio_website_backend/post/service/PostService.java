@@ -68,7 +68,6 @@ public class PostService {
         }
     }
 
-    // skill 검색, post 얻고, skill 추가, 이미지 연결
     /**
      * 게시글 추가
      *
@@ -110,9 +109,10 @@ public class PostService {
      * @param size 페이지의 데이터 개수
      * @param sortBy 정렬 기준 (createdAt(작성 시간), View(조회수))
      * @param sortDir 정렬 방향 (ASC, DESC)
+     * @param skill 게시글 기술 스택 필터링 (Optional)
      * @return 페이지 단위의 게시글 반환
      */
-    public PostPageResponseDTO getAllPosts(int page, int size, String sortBy, String sortDir) {
+    public PostPageResponseDTO getAllPosts(int page, int size, String sortBy, String sortDir, String skill) {
 
         List<String> allowedSortBy = List.of("createdAt", "view");
         List<String> allowedSortDir = List.of("asc", "desc");
@@ -125,7 +125,14 @@ public class PostService {
                 : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Post> postPage = postRepository.findAll(pageable);
+
+        Page<Post> postPage;
+
+        if(skill != null && !skill.isEmpty()){
+            postPage = postRepository.findBySkillName(skill, pageable);
+        }else {
+            postPage = postRepository.findAll(pageable);
+        }
 
         if (postPage.isEmpty())
             return PostPageResponseDTO.create(Collections.emptyList(), postPage);
