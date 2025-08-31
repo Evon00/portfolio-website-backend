@@ -33,11 +33,20 @@ public class ProjectController {
     @Operation(summary = "프로젝트 조회", description = "모든 프로젝트를 페이지 단위로 조회합니다.")
     @Parameters({
             @Parameter(name = "page", description = "현재 page 값, default = 0"),
-            @Parameter(name = "size", description = "한 페이지의 데이터 크기, default = 6")
+            @Parameter(name = "size", description = "한 페이지의 데이터 크기, default = 6"),
+            @Parameter(name = "sortBy", description = "정렬 기준, default = startDate (startDate만 가능)"),
+            @Parameter(name = "sortDir", description = "정렬 방향, default = desc (desc, asc)"),
+            @Parameter(name = "skillName", description = "기술 스택 이름 (optional)")
     })
     @GetMapping
-    public ResponseEntity<SuccessResponse<ProjectPageResponseDTO>> getAllProjects(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "6") int size) {
-        return ResponseEntity.ok(SuccessResponse.ok(projectService.getAllProjects(page, size)));
+    public ResponseEntity<SuccessResponse<ProjectPageResponseDTO>> getAllProjects(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(defaultValue = "startDate") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            @RequestParam(required = false) String skillName
+            ) {
+        return ResponseEntity.ok(SuccessResponse.ok(projectService.getAllProjects(page, size, sortBy, sortDir, skillName)));
     }
 
     @Operation(summary = "프로젝트 추가", description = "프로젝트 정보, 이미지 정보를 통해 프로젝트를 추가합니다.")

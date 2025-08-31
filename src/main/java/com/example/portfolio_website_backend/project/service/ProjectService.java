@@ -44,12 +44,33 @@ public class ProjectService {
      *
      * @param page 현재 페이지 (default = 0)
      * @param size 페이지 당 데이터 개수 (default = 6)
+     * @param sortBy 프로젝트 정렬 기준
+     * @param sortDir 정렬 방향 (desc, asc)
+     * @param skill 검색할 프로젝트 기술 스택
      * @return 프로젝트 정보가 담긴 페이지 DTO
      * @return 프로젝트가 없을 시 빈 배열을 담은 DTO
      */
-    public ProjectPageResponseDTO getAllProjects(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("startDate")));
-        Page<Project> projects = projectRepository.findAll(pageable);
+    public ProjectPageResponseDTO getAllProjects(int page, int size, String sortBy, String sortDir, String skill) {
+
+        List<String> allowedSortBy = List.of("startDate");
+        List<String> allowedSortDir = List.of("asc", "desc");
+
+        if (!allowedSortBy.contains(sortBy)) sortBy = "startDate";
+        if (!allowedSortDir.contains(sortDir.toLowerCase())) sortDir = "desc";
+
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Project> projects;
+
+        if(skill != null && !skill.isBlank()){
+            projects = projectRepository.findBySkillName(skill, pageable);
+        }else{
+            projects = projectRepository.findAll(pageable);
+        }
 
         if (projects.isEmpty()) {
             return ProjectPageResponseDTO.createProjectPageResponseDTO(Collections.emptyList(), projects);
