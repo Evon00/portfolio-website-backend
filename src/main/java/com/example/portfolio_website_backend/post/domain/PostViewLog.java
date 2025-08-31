@@ -24,7 +24,7 @@ public class PostViewLog {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(columnDefinition = "INET", nullable = false)
+    @Column(name = "ip_address", nullable = false, length = 45)
     private String ipAddress;
 
     @Column(name = "user_agent", nullable = false)
