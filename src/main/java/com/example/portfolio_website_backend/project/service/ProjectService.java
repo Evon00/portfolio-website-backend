@@ -8,10 +8,12 @@ import com.example.portfolio_website_backend.member.domain.Member;
 import com.example.portfolio_website_backend.project.domain.Project;
 import com.example.portfolio_website_backend.project.domain.ProjectImage;
 import com.example.portfolio_website_backend.project.dto.request.ProjectAddRequestDTO;
+import com.example.portfolio_website_backend.project.dto.request.ProjectFeaturedUpdateRequestDTO;
 import com.example.portfolio_website_backend.project.dto.request.ProjectUpdateRequestDTO;
 import com.example.portfolio_website_backend.project.dto.response.*;
 import com.example.portfolio_website_backend.project.repository.ProjectImageRepository;
 import com.example.portfolio_website_backend.project.repository.ProjectRepository;
+import com.example.portfolio_website_backend.project.repository.ProjectSkillRepository;
 import com.example.portfolio_website_backend.skill.domain.Skill;
 import com.example.portfolio_website_backend.skill.dto.response.SkillResponseDTO;
 import com.example.portfolio_website_backend.skill.repository.SkillRepository;
@@ -38,6 +40,7 @@ public class ProjectService {
     private final ProjectImageRepository projectImageRepository;
     private final SkillRepository skillRepository;
     private final S3Uploader s3Uploader;
+    private final ProjectSkillRepository projectSkillRepository;
 
     /**
      * 프로젝트 조회
@@ -112,13 +115,17 @@ public class ProjectService {
     @Transactional
     public ProjectAddResponseDTO addProject(ProjectAddRequestDTO requestDTO, List<MultipartFile> files, Member member) {
 
-        List<ProjectImageWithOrder> filesWithOrder = IntStream.range(0, files.size())
-                .mapToObj(i -> new ProjectImageWithOrder(
-                        files.get(i),
-                        requestDTO.displayOrder().get(i)
-                ))
-                .sorted(Comparator.comparing(ProjectImageWithOrder::order))
-                .toList();
+        List<ProjectImageWithOrder> filesWithOrder = new ArrayList<>();
+
+        if(files != null && files.size() != 0) {
+            filesWithOrder = IntStream.range(0, files.size())
+                    .mapToObj(i -> new ProjectImageWithOrder(
+                            files.get(i),
+                            requestDTO.displayOrder().get(i)
+                    ))
+                    .sorted(Comparator.comparing(ProjectImageWithOrder::order))
+                    .toList();
+        }
 
         Project project = requestDTO.toEntity(member);
         projectRepository.save(project);
@@ -205,9 +212,13 @@ public class ProjectService {
         //project skill 수정
         if (requestDTO != null && requestDTO.skillIds() != null) {
             project.getProjectSkills().clear();
+            projectSkillRepository.deleteByProject(project);
+
             List<Skill> skills = skillRepository.findAllById(requestDTO.skillIds());
+
             if (skills.size() != requestDTO.skillIds().size())
                 throw new BusinessException(ExceptionCode.SKILL_NOT_FOUND);
+
             skills.forEach(project::addProjectSkill);
         }
         //project skill 수정
@@ -310,6 +321,56 @@ public class ProjectService {
         List<ProjectImage> projectImages = projectImageRepository.findByProjectIdOrderByDisplayOrder(project.getId());
 
         return ProjectResponseDTO.fromEntity(project,project.getProjectSkills(),projectImages);
+    }
+
+    @Transactional
+    public void updateProjectFeatured(ProjectFeaturedUpdateRequestDTO requestDTO) {
+
+        if(requestDTO.projects() != null){
+            List<Long> projectIds = requestDTO.projects();
+            List<Project> projects = projectRepository.findAll();
+
+            if(projectIds.isEmpty()){
+                projects.forEach(project -> project.setFeatured(false));
+                projectRepository.saveAll(projects);
+                return;
+            }
+
+            if(projectIds.size() > 3)
+                throw new BusinessException(ExceptionCode.FEATURED_PROJECT_LIMIT_EXCEEDED);
+
+            projects.forEach(project -> {
+                boolean beFeatured = projectIds.contains(project.getId());
+                project.setFeatured(beFeatured);
+            });
+
+            projectRepository.saveAll(projects);
+        }
+    }
+
+    public ProjectFeaturedResponseDTO getFeaturedProjects() {
+        List<Project> projects = projectRepository.findProjectsByIsFeaturedOrderByStartDateDesc(true);
+
+        if(projects.isEmpty()) return new ProjectFeaturedResponseDTO(Collections.emptyList());
+
+        List<Long> projectIds = projects.stream()
+                .map(Project::getId)
+                .toList();
+
+        List<ProjectImage> projectImages = projectImageRepository.findByProjectIdInOrderByDisplayOrder(projectIds);
+
+        Map<Long, List<ProjectImage>> imagesByProjectId = projectImages.stream()
+                .collect(Collectors.groupingBy(projectImage -> projectImage.getProject().getId()));
+
+        List<ProjectResponseDTO> responses = projects.stream()
+                .map(project ->
+                        ProjectResponseDTO.fromEntity(
+                                project,
+                                project.getProjectSkills(),
+                                imagesByProjectId.getOrDefault(project.getId(), Collections.emptyList())))
+                .toList();
+
+        return new ProjectFeaturedResponseDTO(responses);
     }
 
     record ProjectImageWithOrder(MultipartFile file, int order) {

@@ -76,4 +76,8 @@ public class Project {
         if (requestDTO.startDate() != null) this.startDate = requestDTO.startDate();
         if (requestDTO.endDate() != null) this.endDate = requestDTO.endDate();
     }
+
+    public void setFeatured(boolean isFeatured) {
+        this.isFeatured = isFeatured;
+    }
 }
