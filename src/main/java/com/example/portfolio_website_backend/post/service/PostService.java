@@ -12,6 +12,7 @@ import com.example.portfolio_website_backend.post.dto.request.PostUpdateRequestD
 import com.example.portfolio_website_backend.post.dto.response.*;
 import com.example.portfolio_website_backend.post.repository.PostImageRepository;
 import com.example.portfolio_website_backend.post.repository.PostRepository;
+import com.example.portfolio_website_backend.post.repository.PostSkillRepository;
 import com.example.portfolio_website_backend.skill.domain.Skill;
 import com.example.portfolio_website_backend.skill.repository.SkillRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostImageRepository postImageRepository;
     private final SkillRepository skillRepository;
+    private final PostSkillRepository postSkillRepository;
 
     private final S3Uploader s3Uploader;
 
@@ -89,17 +91,19 @@ public class PostService {
         Post post = requestDTO.toEntity(member);
         skills.forEach(post::addPostSkill);
         postRepository.save(post);
-        
+
+        List<PostImage> images = new ArrayList<>();
+
         if (!requestDTO.images().isEmpty()) {
             List<PostImage> postImages = postImageRepository.findAllById(requestDTO.images());
             if (postImages.size() != requestDTO.images().size())
                 throw new BusinessException(ExceptionCode.IMAGE_NOT_FOUND);
 
             postImages.forEach(postImage -> postImage.setPost(post));
-            postImageRepository.saveAll(postImages);
+            images = postImageRepository.saveAll(postImages);
         }
 
-        return PostResponseDTO.create(post);
+        return PostResponseDTO.create(post, images);
     }
 
     /**
@@ -134,11 +138,25 @@ public class PostService {
             postPage = postRepository.findAll(pageable);
         }
 
+        List<Long> postIds = postPage.getContent()
+                .stream()
+                .map(Post::getId)
+                .toList();
+
+        List<PostImage> postImages = postImageRepository.findAllPostImagesByPostId(postIds);
+
+        Map<Long, List<PostImage>> imagesByPostId = postImages.stream()
+                .collect(Collectors.groupingBy(
+                        image -> image.getPost().getId(),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
         if (postPage.isEmpty())
             return PostPageResponseDTO.create(Collections.emptyList(), postPage);
 
         List<PostResponseDTO> postResponseDTOS = postPage.stream()
-                .map(PostResponseDTO::create)
+                .map(post -> PostResponseDTO.create(post, imagesByPostId))
                 .toList();
 
         return PostPageResponseDTO.create(postResponseDTOS, postPage);
@@ -173,14 +191,19 @@ public class PostService {
         //기술 스택 수정
         if (requestDTO != null && requestDTO.skills() != null) {
             post.getPostSkills().clear();
+            postSkillRepository.deleteByPost(post);
             List<Skill> skills = skillRepository.findAllById(requestDTO.skills());
-            if (skills.size() != requestDTO.skills().size())
+
+            if(skills.size() != requestDTO.skills().size())
                 throw new BusinessException(ExceptionCode.SKILL_NOT_FOUND);
+
             skills.forEach(post::addPostSkill);
         }
         //기술 스택 수정
 
         //이미지 수정
+
+        List<PostImage> addedPostImage = new ArrayList<>();
         if (requestDTO != null && requestDTO.images() != null) {
             List<PostImage> postImages = postImageRepository.findPostImagesByPostId(id);
             if (!postImages.isEmpty()) {
@@ -188,7 +211,7 @@ public class PostService {
                 postImageRepository.deletePostImageByPostId(id);
             }
 
-            List<PostImage> addedPostImage = postImageRepository.findAllById(requestDTO.images());
+            addedPostImage = postImageRepository.findAllById(requestDTO.images());
             if (postImages.size() != requestDTO.images().size())
                 throw new BusinessException(ExceptionCode.IMAGE_NOT_FOUND);
 
@@ -196,7 +219,7 @@ public class PostService {
         }
         //이미지 수정
 
-        return PostResponseDTO.create(post);
+        return PostResponseDTO.create(post,addedPostImage);
 
     }
 
