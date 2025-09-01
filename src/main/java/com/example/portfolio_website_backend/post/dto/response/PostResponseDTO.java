@@ -1,12 +1,15 @@
 package com.example.portfolio_website_backend.post.dto.response;
 
 import com.example.portfolio_website_backend.post.domain.Post;
+import com.example.portfolio_website_backend.post.domain.PostImage;
 import com.example.portfolio_website_backend.skill.dto.response.SkillResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 @Schema(description = "게시글 요약 응답 DTO")
 public record PostResponseDTO(
@@ -25,13 +28,22 @@ public record PostResponseDTO(
         @Schema(description = "게시글 슬러그", example = "post-springboot")
         String slug,
         @Schema(description = "게시글 기술 스택 리스트")
-        List<SkillResponseDTO> skills
+        List<SkillResponseDTO> skills,
+
+        @Schema(description = "게시글 이미지 리스트")
+        List<PostImageResponseDTO> images
 
 ) {
-    public static PostResponseDTO create(Post post) {
-        List<SkillResponseDTO> dtos = post.getPostSkills().stream()
+    public static PostResponseDTO create(Post post, Map<Long, List<PostImage>> imagesByPostId) {
+        List<SkillResponseDTO> skills = post.getPostSkills().stream()
                 .sorted(Comparator.comparing(ps -> ps.getSkill().getId()))
                 .map(ps -> SkillResponseDTO.fromEntity(ps.getSkill()))
+                .toList();
+
+        List<PostImage> imageResponseDTOS = imagesByPostId.getOrDefault(post.getId(), Collections.emptyList());
+
+        List<PostImageResponseDTO> images = imageResponseDTOS.stream()
+                .map(PostImageResponseDTO::create)
                 .toList();
 
         return new PostResponseDTO(
@@ -42,7 +54,31 @@ public record PostResponseDTO(
                 post.getCreatedAt(),
                 post.getView(),
                 post.getSlug(),
-                dtos
+                skills,
+                images
+        );
+    }
+
+    public static PostResponseDTO create(Post post, List<PostImage> postImages) {
+        List<SkillResponseDTO> skills = post.getPostSkills().stream()
+                .sorted(Comparator.comparing(ps -> ps.getSkill().getId()))
+                .map(ps -> SkillResponseDTO.fromEntity(ps.getSkill()))
+                .toList();
+
+        List<PostImageResponseDTO> images = postImages.stream()
+                .map(PostImageResponseDTO::create)
+                .toList();
+
+        return new PostResponseDTO(
+                post.getId(),
+                post.getTitle(),
+                post.getSummary(),
+                post.getReadTime(),
+                post.getCreatedAt(),
+                post.getView(),
+                post.getSlug(),
+                skills,
+                images
         );
     }
 }
