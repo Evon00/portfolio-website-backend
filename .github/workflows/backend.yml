@@ -37,6 +37,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ${{ secrets.EC2_APP_PATH }}
+            docker-compose down --remove-orphans
+            docker system prune -af
             docker-compose pull backend
-            docker-compose up -d --no-deps backend
+            docker-compose up -d backend
             docker image prune -af
