@@ -122,7 +122,7 @@ public class MemberService {
 
         try {
 
-            if (member.getProfileUrl() != null) {
+            if (member.getProfileUrl() != null && !member.getProfileUrl().isEmpty()) {
                 s3Uploader.delete(member.getS3Key());
                 member.setImageNull();
             }

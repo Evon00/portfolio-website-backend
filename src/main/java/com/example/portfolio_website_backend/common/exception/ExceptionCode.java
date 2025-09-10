@@ -37,6 +37,7 @@ public enum ExceptionCode {
 
     //프로젝트 관련 (2201 ~ 2300)
     PROJECT_NOT_FOUND(2201, NOT_FOUND, "존재하지 않는 프로젝트입니다."),
+    FEATURED_PROJECT_LIMIT_EXCEEDED(2202, BAD_REQUEST, "주요 프로젝트는 3개를 넘길 수 없습니다."),
 
     //게시글 관련 (2301 ~ 2400)
     POST_NOT_FOUND(2301, NOT_FOUND, "존재하지 않는 게시글입니다.")

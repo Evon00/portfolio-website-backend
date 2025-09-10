@@ -1,7 +1,7 @@
 package com.example.portfolio_website_backend.member.dto.response;
 
 import com.example.portfolio_website_backend.member.domain.Member;
-import com.example.portfolio_website_backend.member.domain.MemberSkill;
+import com.example.portfolio_website_backend.skill.dto.response.SkillResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -21,11 +21,15 @@ public record MemberProfileResponseDTO(
         String emailUrl,
         @Schema(description = "사용자 프로필 이미지 URL", example = "profile/member/~")
         String profileUrl,
-        @Schema(description = "사용자 기술스택", example = "[{id : 1 , member : {Member}, skill : {Skill}, ... }, ... , ...]")
-        List<MemberSkill> memberSkills
+        @Schema(description = "사용자 기술스택 리스트")
+        List<SkillResponseDTO> memberSkills
 
 ) {
     public static MemberProfileResponseDTO fromEntity(Member member) {
+        List<SkillResponseDTO> skills = member.getMemberSkills().stream()
+                .map(ms -> SkillResponseDTO.fromEntity(ms.getSkill()))
+                .toList();
+
         return new MemberProfileResponseDTO(
                 member.getId(),
                 member.getName(),
@@ -33,7 +37,7 @@ public record MemberProfileResponseDTO(
                 member.getGithubUrl(),
                 member.getEmailUrl(),
                 member.getProfileUrl(),
-                member.getMemberSkills()
+                skills
         );
     }
 }

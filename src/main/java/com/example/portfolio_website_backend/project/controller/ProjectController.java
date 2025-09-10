@@ -4,6 +4,7 @@ import com.example.portfolio_website_backend.common.dto.SuccessResponse;
 import com.example.portfolio_website_backend.common.security.annotation.CurrentMember;
 import com.example.portfolio_website_backend.member.domain.Member;
 import com.example.portfolio_website_backend.project.dto.request.ProjectAddRequestDTO;
+import com.example.portfolio_website_backend.project.dto.request.ProjectFeaturedUpdateRequestDTO;
 import com.example.portfolio_website_backend.project.dto.request.ProjectUpdateRequestDTO;
 import com.example.portfolio_website_backend.project.dto.response.*;
 import com.example.portfolio_website_backend.project.service.ProjectService;
@@ -103,5 +104,22 @@ public class ProjectController {
             @Parameter(description = "프로젝트 슬러그")
             @PathVariable String slug){
         return ResponseEntity.ok(SuccessResponse.ok(projectService.getProjectDetail(slug)));
+    }
+
+    @Operation(summary = "주요 프로젝트 선정", description = "프로젝트를 주요 프로젝트로 선정합니다. (최대 3개)")
+    @SecurityRequirement(name = "Authorization")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping(value = "/featured")
+    public ResponseEntity<SuccessResponse<Void>> updateProjectFeatured(
+            @Parameter(description = "주요 프로젝트로 선정할 프로젝트 ID 리스트")
+            @RequestBody ProjectFeaturedUpdateRequestDTO requestDTO){
+        projectService.updateProjectFeatured(requestDTO);
+        return ResponseEntity.ok(SuccessResponse.ok(null));
+    }
+
+    @Operation(summary = "주요 프로젝트 조회", description = "주요 프로젝트를 조회합니다. 최대 3개")
+    @GetMapping(value = "/featured")
+    public ResponseEntity<SuccessResponse<ProjectFeaturedResponseDTO>> getFeaturedProjects(){
+        return ResponseEntity.ok(SuccessResponse.ok(projectService.getFeaturedProjects()));
     }
 }

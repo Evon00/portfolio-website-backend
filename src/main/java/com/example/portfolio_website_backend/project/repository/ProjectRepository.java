@@ -29,4 +29,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
            WHERE s.skillName = :skillName
            """)
     Page<Project> findBySkillName(@Param("skillName") String skillName, Pageable pageable);
+
+    List<Project> findProjectsByIsFeaturedOrderByStartDateDesc(boolean isFeatured);
 }
