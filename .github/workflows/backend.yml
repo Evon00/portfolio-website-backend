@@ -2,7 +2,7 @@ name: Deploy Backend
 
 on:
   push:
-    branches: [ "dev","main"]
+    branches: ["dev","main"]
 
 jobs:
   deploy:
@@ -19,12 +19,17 @@ jobs:
       - name: Log in to DockerHub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build & Push Backend Docker Image
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
+      - name: Set up Docker Buildx
+        run: docker buildx create --use
 
-      - name: Deploy to EC2
+      - name: Build & Push Multi-Arch Backend Docker Image
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest \
+            --push .
+
+      - name: Deploy Backend to EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -33,5 +38,5 @@ jobs:
           script: |
             cd ${{ secrets.EC2_APP_PATH }}
             docker-compose pull backend
-            docker-compose up -d
+            docker-compose up -d --no-deps backend
             docker image prune -af
