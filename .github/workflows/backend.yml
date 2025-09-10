@@ -37,6 +37,22 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd ${{ secrets.EC2_APP_PATH }}
+            cd ${{ secrets.EC2_APP_PATH }}
+            
+            echo "Stopping backend service..."
+            docker-compose stop backend
+            
+            echo "Removing old backend container and image..."
+            docker-compose rm -f backend
+            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest || true
+            
+            echo "Pulling fresh backend image..."
             docker-compose pull backend
+            
+            echo "Starting new backend..."
             docker-compose up -d backend
-            docker image prune -af
+            
+            echo "Cleaning up..."
+            docker image prune -f
+            
+            echo "Backend deployment completed successfully"
