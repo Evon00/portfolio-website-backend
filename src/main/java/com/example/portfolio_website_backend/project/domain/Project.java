@@ -30,7 +30,7 @@ public class Project {
     private String title;
     @Column(nullable = false)
     private String summary;
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
     @Column(name = "github_url")
     private String githubUrl;
